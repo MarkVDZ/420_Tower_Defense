@@ -3,10 +3,14 @@ Level level;
 Pathfinder pathfinder;
 Player enemy;
 
-float deltaTime = 0;
+// declaration types, check the Java API
+
 float timePrev = 0;
 float timer = 0;
-float time;
+int lives = 10;
+int waveCount = 10;
+final int waveConst = 10;
+int wavesCompleted = 0;
 
 ArrayList<Tower> towers = new ArrayList <Tower>();
 ArrayList<Player> enemies = new ArrayList<Player>();
@@ -28,24 +32,30 @@ void setup() {
 
 void draw() {
 
-  //UPDATE LOGIC
-  enemy.update();
-  //END UPDATE LOGIC
+  float time = millis()/1000.0;
+  float dt = (time - timePrev);
+  timePrev = time;
+  timer += dt;
+  //println(timePrev);
+  //println(timer);
 
-  time = millis()/1000;
-
-  if (enemies.size() < 5) {
-
-    // for (int i = 0; i <= 5; i++) {
-
-    if (timer >= 100) {
-      timer = 0;
-      enemies.add(new Player());
+  if (waveCount > 0) {
+    if (enemies.size() < 20) {
+      // for (int i = 0; i <= 5; i++) {
+      if (timer >= 2) {
+        enemies.add(new Player());
+        timer = 0;
+        waveCount--;
+        println(waveCount);
+      }// if end
+      //}// for loop end
     }// if end
-    //}// for loop end
-  }// if end
+  }
 
-  timer += time;
+  if (enemies.size() == 0 && waveCount < 1) {
+    wavesCompleted++;
+    waveCount = waveConst + wavesCompleted;
+  }
 
   for (int i=0; i<towers.size(); i++) {
     //fill(255);
@@ -53,71 +63,48 @@ void draw() {
     towers.get(i).draw();
   }
 
-print(towers.size());
-  //spawnWave(5);
-  
   Point p = TileHelper.pixelToGrid(new PVector(mouseX, mouseY));//making a new point p and using that to get the grid position of the mouses pixels space equivalent
   Tile tile = level.getTile(p.x, p.y);
-  if (tile != null){ //if the tile is not null you can hover over the tile 
-  tile.hover = true;
+  if (tile != null) { //if the tile is not null you can hover over the tile 
+    tile.hover = true;
     // draw a little ellipse in the tile's center
-   PVector c =  tile.getCenter(); // gets the center of the mouse 
-   fill(0);
-   ellipse(c.x, c.y, 8, 8);
+    PVector c =  tile.getCenter(); // gets the center of the mouse 
+    fill(0);
+    ellipse(c.x, c.y, 8, 8);
   }
-
-  //print(enemies.size());
-  //print(timer);
 
   //DRAW LOGIC
   background(127);
   level.draw();
+  //println(lives);
 
-  
-
-  //enemy.draw();
-  for (int i = 0; i < enemies.size(); i++) {
+  for (int i = enemies.size()-1; i >= 0; i--) {
     enemies.get(i).draw();
     enemies.get(i).update();
 
-    //print(enemies.get(i).isDead);
-    if (enemies.get(i).isDead) enemies.remove(i);
+    if (enemies.get(i).isDead) {
+      lives--;
+      enemies.remove(i);
+    }
   }
 
-for (int i=0; i<towers.size(); i++) {
+  for (int i = towers.size() - 1; i >= 0; i--) {
     towers.get(i).update();
   }
   //END DRAW LOGIC
 }
 
-void spawnWave(int amountToSpawn) {
-
-  if (amountToSpawn <=0) return;
-  else enemies.add(new Player());
-
-  int spawnTimer = 0;
-  spawnTimer += time;
-
-  if (spawnTimer > 1000) {
-    spawnWave(amountToSpawn--);
-    spawnTimer = 0;
-  }
-}
-
 
 void mousePressed() {
-  Point p = TileHelper.pixelToGrid(new PVector(mouseX, mouseY));
 
-  enemy.setTargetPosition(p);
+  if (enemies.size() != 0) {
+    enemies.get(0).damage();
+    println(enemies.get(0).health);
+  }
+  //enemy.setTargetPosition(p);
 
-  Tower t = new Tower(p);
+  // Tower t = new Tower(p);
 
   //add tower to array/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  towers.add(new Tower(p));
+  //towers.add(new Tower(p));
 }
-
-/*void Time(){
- float timeCurr = millis();
- deltaTime = (timeCurr - timePrev) / 1000;
- timePrev = timeCurr;
- }*/
