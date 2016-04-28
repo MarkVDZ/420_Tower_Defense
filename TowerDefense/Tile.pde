@@ -30,7 +30,7 @@ class Tile {
     isOn = false;
   }
   void draw() {  
-    if (TERRAIN == 0) return; //fill(100);
+    if (TERRAIN == 0) fill(127);
     //else if (hover) {}
     //else return;
     if (TERRAIN == 1)fill(200);

@@ -8,6 +8,7 @@ class Player {
   ArrayList<Tile> path;
   boolean findPath = true;
   boolean isDead = false;
+  int health = 10;
 
   Player() {
     teleportTo(gridP);
@@ -57,10 +58,25 @@ class Player {
 
     PVector pixlT = level.getTileCenter(gridP);
     PVector diff = PVector.sub(pixlT, pixlP);
+    
+    int speed = 1;
 
     //Move towards the target
-    pixlP.x += diff.x*.2;
-    pixlP.y += diff.y*.2;
+    //pixlP.x += diff.x*.2;
+    //pixlP.y += diff.y*.2;
+    // Take the difference (diff) and interpolate the movement
+    if(diff.x > 0){
+      pixlP.x += speed;
+    }
+    if(diff.x < 0){
+      pixlP.x -= speed;
+    }
+    if(diff.y > 0){
+      pixlP.y += speed;
+    }
+    if(diff.y < 0){
+      pixlP.y -= speed;
+    }
 
     //MAKE SURE THERE ARE NO MOVEMENT BUGS...OR ELSE...
     if (abs(diff.x)<1)pixlP.x = pixlT.x;
@@ -91,6 +107,11 @@ class Player {
      fill(0);
      ellipse(prevP.x, prevP.y, 8,8);
    }
+  }
+  
+  void damage(){
+    health--;
+    if(health == 0) isDead = true;
   }
   
 }
