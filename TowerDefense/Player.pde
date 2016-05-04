@@ -1,3 +1,5 @@
+
+
 class Player {
   //GRID-SPACE COORDINATES
   Point gridP = new Point(); //grid current position
@@ -8,6 +10,7 @@ class Player {
   ArrayList<Tile> path;
   boolean findPath = true;
   boolean isDead = false;
+  boolean isDeadAtTarget = false;
   int health = 10;
 
   Player() {
@@ -41,7 +44,7 @@ class Player {
     Tile end = level.getTile(9, 9);
 
     if (start == end) {
-      isDead = true;
+      isDeadAtTarget = true;
       path = null;
       return;
     }
@@ -109,9 +112,25 @@ class Player {
    }
   }
   
-  void damage(){
+  /*void damage(){
     health--;
     if(health == 0) isDead = true;
+  }*/
+  
+   void hurt() {
+    health --;
+    fill(255,0,0);
+    ellipse(pixlP.x + random(5), pixlP.y + random(5), random(4+2), random(4+2));
+    ellipse(pixlP.x - random(5), pixlP.y - random(5), random(4+2), random(4+2));
+    ellipse(pixlP.x - random(5), pixlP.y + random(5), random(4+2), random(4+2));
+   if (health == 0){
+     isDead = true;
+     //println(health);
+   }
+  }
+  
+  void healthUp(){
+    health += 2;
   }
   
 }

@@ -22,6 +22,8 @@ class Tile {
   boolean hover = false;
   boolean isOn = false;
 
+Tower tower;
+
   Tile(int X, int Y) {
     this.X = X;
     this.Y = Y;
