@@ -1,3 +1,16 @@
+import ddf.minim.*;
+
+Minim minim;
+AudioPlayer player;
+AudioPlayer button;
+AudioPlayer loseLife;
+AudioPlayer enemyDie;
+AudioPlayer playerDie;
+AudioPlayer towerPlace;
+
+// Music from www.bensound.com
+
+
 //OBJECTS
 Level level;
 Pathfinder pathfinder;
@@ -17,6 +30,7 @@ ArrayList<Tower> towers = new ArrayList <Tower>();
 ArrayList<Player> enemies = new ArrayList<Player>();
 
 boolean sameTowerPlacement = false;
+boolean paused = false;
 
 //States Stuff
 boolean Title = true;
@@ -30,9 +44,18 @@ void setup() {
   TileHelper.app = this; 
   size(640, 640);
 
+  minim = new Minim(this);
   level = new Level();
   pathfinder = new Pathfinder();
   enemy = new Player();
+  
+  player = minim.loadFile("bensound-scifi.mp3");
+  loseLife = minim.loadFile("Path end.wav");
+  enemyDie = minim.loadFile("Death Sound.mp3");
+  playerDie = minim.loadFile("player dies.wav");
+  towerPlace = minim.loadFile("tower place.wav");
+  button = minim.loadFile("Button Press.mp3");
+  player.play();
   //towers = new ArrayList <Tower>(); 
   /* for (int i = 0; i < 2; i++) {
    enemies.add(new Player());
@@ -48,10 +71,15 @@ void draw() {
     textSize(20);
     text("Press Enter to Play", CENTER + 225, 300);
     if (Keys.onDown(Keys.ENTER)) {
+      button.rewind();
+      button.play();
       Play = true;
       Title = false;
       Lose = false;
       setup = true;
+      lives = 10;
+      waveCount = waveConst;
+      level = new Level();
     }
   }
 
@@ -64,9 +92,22 @@ void draw() {
       textSize(20);
       text("This is the setup phase. When ready, hit space to continue.", 50, 500);
       
-      if(Keys.onDown(Keys.SPACE)) setup = false;
-      
+      if(Keys.onDown(Keys.SPACE)){
+        button.rewind();
+        button.play(); 
+        setup = false;
+      }
     }
+    
+    if(Keys.onDown(Keys.P)){
+     paused = !paused; 
+    }
+    if(paused){
+      pause();
+      //println(paused);
+      return;
+    }
+    
     float time = millis()/1000.0;
     float dt = (time - timePrev);
     timePrev = time;
@@ -95,10 +136,11 @@ void draw() {
     }
 
     if (enemies.size() != 0) {
-      println(enemies.get(0).health);
+      //println(enemies.get(0).health);
     }
 
-    
+    //println(waveCount);
+    //println(towers.size());
 
     for (int i = towers.size()-1; i >= 0; i--) {
       fill(255);
@@ -119,6 +161,7 @@ void draw() {
     //println(lives);
 
     textSize(20);
+    fill(255);
     text("Waves Completed:  " + wavesCompleted, 400, 100);
     text("Life:  " + lives, 400, 150);
 
@@ -128,6 +171,11 @@ void draw() {
 
       if (enemies.size() != 0) {
         if (enemies.get(i).isDeadAtTarget) {
+          //background(255, 0, 0);
+          fill(255, 0, 0);
+          rect(0, 0, 640, 640);
+          loseLife.rewind();
+          loseLife.play();
           lives--;
           enemies.remove(i);
         }
@@ -135,6 +183,8 @@ void draw() {
 
       if (enemies.size() != 0) {
         if (enemies.get(i).isDead) {
+          enemyDie.rewind();
+          enemyDie.play();
           currency += 10;
           enemies.remove(i);
         }
@@ -147,14 +197,16 @@ void draw() {
     }
 
     if (lives < 1) {
+      playerDie.rewind();
+      playerDie.play();
       Play = false;
       Lose = true;
 
       for (int i = towers.size() - 1; i >= 0; i--) {
-        towers.remove(0);
+        towers.remove(i);
       }
       for (int i = enemies.size() - 1; i >= 0; i--) {
-        enemies.remove(0);
+        enemies.remove(i);
       }
       
     }
@@ -164,36 +216,64 @@ void draw() {
   if (Lose == true && Play == false) {
     background(127);
     textSize(30);
+    fill(0);
     text("You have lost", width/4 + 50, 100);
-    text("Waves Completed:  " + wavesCompleted, width/4 - 50, 200);
+    text("Waves Completed:  " + wavesCompleted, width/4, 200);
     text("Life:  " + lives, width/4 + 100, 300);
     textSize(20);
-    text("Press Space to return to the Main Menu", width/4 - 100, 400);
+    text("Press Space to return to the Main Menu", width/4 - 50, 400);
 
     if (Keys.onDown(Keys.SPACE)) {
+      button.rewind();
+      button.play();
       Lose = false;
       Title = true;
       Play = false;
-      lives = 10;
     }
   } // end loseState
 } // end draw
 
 
 void mousePressed() {
+  if(Play == true){
+    
   Point p = TileHelper.pixelToGrid(new PVector(mouseX, mouseY));
 
   enemy.setTargetPosition(p);
 
   Tower t = new Tower(p);
+  towerPlace.rewind();
+  towerPlace.play();
 
   //add tower to array//
 
   towers.add(new Tower(p));
   level.setTile(p, 5);
-
+  }
   /*if (enemies.size() != 0) {
    enemies.get(0).damage();
    println(enemies.get(0).health);
    }*/
+}
+
+void pause(){
+  background(0);
+  textSize(40);
+  fill(255);
+  text("PAUSED", width/2 - 75, 100);
+  textSize(30);
+  text("Press space to return to main menu", 60, 400);
+  if(Keys.onDown(Keys.SPACE)){
+    Lose = false;
+    Play = false;
+    Title = true;
+    paused = false;
+    
+    for (int i = towers.size() - 1; i >= 0; i--) {
+        towers.remove(i);
+      }
+      for (int i = enemies.size() - 1; i >= 0; i--) {
+        enemies.remove(i);
+      }
+  }
 }

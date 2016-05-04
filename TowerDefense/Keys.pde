@@ -14,6 +14,7 @@ static class Keys {
   static final int S = 83;
   static final int D = 68;
   static final int SHIFT = 16;
+  static final int P = 80;
 
   static final int MAX_VALUE = 128;
   static boolean[] keys = new boolean[MAX_VALUE];

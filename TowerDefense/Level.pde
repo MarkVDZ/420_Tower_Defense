@@ -5,6 +5,7 @@
   Level() {
     loadLevel(LevelDefs.LEVEL2);
   }
+  
 
   void draw() {
     noStroke();
@@ -45,6 +46,13 @@
   //useful for re-establishing neigbor relationships between tiles
   void reloadLevel() {
     loadLevel(level);
+  }
+  
+  void setTile(Point p, int type){
+    Tile tile = getTile(p.x, p.y);
+    if (tile != null){
+  tile.TERRAIN  = type;  
+    }
   }
 
   void loadLevel(int[][] layout) {
