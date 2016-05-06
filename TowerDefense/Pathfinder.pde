@@ -14,6 +14,10 @@ class Pathfinder {
     connectStartToEnd(start, end);
     //Step 2: BUILD PATH BACK TO THE START
     ArrayList<Tile> path = connectEndToStart(start, end);
+    for (int i = path.size()-1; i>=0; i--){
+      if(path.get(i).TERRAIN == 2 || path.get(i).TERRAIN == 5 || path.get(i).TERRAIN == 6) return null;
+    }
+    
     //Step 3: REVERSE THE PATH FOR CONVENIENCE
     ArrayList<Tile> reverse = new ArrayList<Tile>();
     for (int i = path.size()-1; i>=0; i--)reverse.add(path.get(i));
