@@ -16,7 +16,7 @@ class Player {
   Player() {
     
     teleportTo(new Point(level.startTile.X, level.startTile.Y));
-    health = 10 + 2 * wavesCompleted;
+    health = 10 + 5 * wavesCompleted;
   }
   void teleportTo(Point gridP) {
     Tile tile = level.getTile(gridP.x, gridP.y);
