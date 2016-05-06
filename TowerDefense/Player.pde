@@ -14,7 +14,9 @@ class Player {
   int health = 10;
 
   Player() {
-    teleportTo(gridP);
+    
+    teleportTo(new Point(level.startTile.X, level.startTile.Y));
+    health = 10 + 2 * wavesCompleted;
   }
   void teleportTo(Point gridP) {
     Tile tile = level.getTile(gridP.x, gridP.y);
@@ -37,11 +39,14 @@ class Player {
 
   void findPathAndTakeNextStep() {
     findPath = false;
+    //Tile start = level.getTile(gridP.x, gridP.y);
+    //Tile end = level.getTile(9, 9);
 
     //find path to target grid position
     Tile start = level.getTile(gridP.x, gridP.y);
     //Tile end = level.getTile(gridT.x, gridT.y);
-    Tile end = level.getTile(9, 9);
+    Tile end = level.endTile;
+    
 
     if (start == end) {
       isDeadAtTarget = true;
@@ -112,11 +117,6 @@ class Player {
    }
   }
   
-  /*void damage(){
-    health--;
-    if(health == 0) isDead = true;
-  }*/
-  
    void hurt() {
     health --;
     fill(255,0,0);
@@ -128,9 +128,4 @@ class Player {
      //println(health);
    }
   }
-  
-  void healthUp(){
-    health += 2;
-  }
-  
 }

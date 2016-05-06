@@ -18,11 +18,12 @@ static class TileHelper {
 class Tile {
   int X;
   int Y;
-  int TERRAIN = 0;
+  public int TERRAIN = 0;
   boolean hover = false;
   boolean isOn = false;
-
-Tower tower;
+  //PImage floor = loadImage("Floor.png");
+  
+  Tower tower;
 
   Tile(int X, int Y) {
     this.X = X;
@@ -40,6 +41,7 @@ Tower tower;
     if (TERRAIN == 3)fill(255, 0, 0);
     if (TERRAIN == 4)fill(0, 255, 0);
     if (TERRAIN == 5)fill(175);
+    if (TERRAIN == 6)fill(150);
     
     if (hover) fill(255,255,0);
     rect(X*TileHelper.W, Y*TileHelper.H, TileHelper.W, TileHelper.H);
@@ -66,6 +68,8 @@ Tower tower;
     //return TERRAIN != 2;
     if (TERRAIN == 2) return false;
     if(isOn) return false;
+    if (TERRAIN == 5)return false;
+    if (TERRAIN == 6) return false;
     return true; //if tile is wall or tower enemy cant pass///////////////////////////////////////////////////////////
   }
 
@@ -84,6 +88,8 @@ Tower tower;
     if (TERRAIN == 2) return 1000;
     if (TERRAIN == 3) return 1;
     if (TERRAIN == 4) return 1;
+    if (TERRAIN == 5) return 1000;
+    if (TERRAIN == 6) return 1000;
     return 1000;
   }
 
